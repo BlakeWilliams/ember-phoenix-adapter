@@ -1,7 +1,7 @@
 {
   "name": "ember-phoenix-adapter",
   "version": "0.0.0",
-  "description": "The default blueprint for ember-cli addons.",
+  "description": "An Ember adapter for Phoenix channels.",
   "directories": {
     "doc": "doc",
     "test": "tests"
@@ -15,8 +15,15 @@
   "engines": {
     "node": ">= 0.10.0"
   },
-  "author": "",
-  "license": "MIT",
+  "author": "Blake Williams",
+  "license": "BSD-2-Clause",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BlakeWilliams/ember-phoenix-adapter"
+  },
+  "bugs": {
+    "url": "https://github.com/BlakeWilliams/ember-phoenix-adapter/issues"
+  },
   "devDependencies": {
     "broccoli-asset-rev": "^2.0.2",
     "ember-cli": "0.2.3",
