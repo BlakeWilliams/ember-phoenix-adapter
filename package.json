@@ -11,16 +11,15 @@
     "build": "ember build",
     "test": "ember try:testall"
   },
-  "repository": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BlakeWilliams/ember-phoenix-adapter"
+  },
   "engines": {
     "node": ">= 0.10.0"
   },
   "author": "Blake Williams",
   "license": "BSD-2-Clause",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/BlakeWilliams/ember-phoenix-adapter"
-  },
   "bugs": {
     "url": "https://github.com/BlakeWilliams/ember-phoenix-adapter/issues"
   },
@@ -36,8 +35,9 @@
     "ember-cli-qunit": "0.3.10",
     "ember-cli-uglify": "1.0.1",
     "ember-data": "1.0.0-beta.16.1",
-    "ember-export-application-global": "^1.0.2",
     "ember-disable-prototype-extensions": "^1.0.0",
+    "ember-export-application-global": "^1.0.2",
+    "ember-inflector": "^1.6.1",
     "ember-try": "0.0.4"
   },
   "keywords": [

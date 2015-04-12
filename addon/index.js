@@ -1,5 +1,6 @@
 import Ember from "ember";
 import DS from "ember-data";
+import {singularize, pluralize} from 'ember-inflector';
 
 export default DS.Adapter.extend({
   defaultSerializer: "ams",
@@ -65,8 +66,9 @@ export default DS.Adapter.extend({
 
   _joinChannel(type, action, message, resolve, reject) {
     const joinParams = this.get("joinParams");
+    const pluralType = pluralize(type);
 
-    this.phoenix.join(`${type}:${action}`, joinParams).
+    this.phoenix.join(`${pluralType}:${action}`, joinParams).
       receive("ignore", () => {
         const error = `Could not connect to the ${type} channel`;
         Ember.logger.warn(error);
