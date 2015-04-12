@@ -2,11 +2,13 @@ import Ember from "ember";
 import DS from "ember-data";
 
 export default DS.Adapter.extend({
-  defaultSerializer: "ActiveModel",
+  defaultSerializer: "ams",
 
   addEvents: ["add"],
   updateEvents: ["update"],
   removeEvents: ["remove"],
+
+  joinParams: {},
 
   init: function() {
     this.joinedChannels = {};
@@ -62,7 +64,9 @@ export default DS.Adapter.extend({
   },
 
   _joinChannel(type, action, message, resolve, reject) {
-    this.phoenix.join(`${type}:${action}`, {}).
+    const joinParams = this.get("joinParams");
+
+    this.phoenix.join(`${type}:${action}`, joinParams).
       receive("ignore", () => {
         const error = `Could not connect to the ${type} channel`;
         Ember.logger.warn(error);

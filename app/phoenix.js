@@ -234,7 +234,6 @@ export class Socket {
   }
 
   connect(){
-    console.log("WAT");
     this.disconnect(() => {
       this.conn = new this.transport(this.endPoint)
       this.conn.timeout   = this.longpoller_timeout
