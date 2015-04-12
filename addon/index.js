@@ -2,6 +2,12 @@ import Ember from "ember";
 import DS from "ember-data";
 
 export default DS.Adapter.extend({
+  defaultSerializer: "ActiveModel",
+
+  addEvents: ["add"],
+  updateEvents: ["update"],
+  removeEvents: ["remove"],
+
   init: function() {
     this.joinedChannels = {};
   },
@@ -48,31 +54,50 @@ export default DS.Adapter.extend({
       if (channel) {
         this._resolvePush(channel.push(action, message), resolve, reject);
       } else {
-        this._joinChannel(type, action, message);
+        this._joinChannel(type, action, message, resolve, reject);
       }
     });
 
     return promise;
   },
 
-  _joinChannel(type, action, message) {
+  _joinChannel(type, action, message, resolve, reject) {
     this.phoenix.join(`${type}:${action}`, {}).
       receive("ignore", () => {
-        const error = `Could not connect to the ${channel} channel`;
+        const error = `Could not connect to the ${type} channel`;
         Ember.logger.warn(error);
         reject(error);
       }).
       receive("ok", (channel) => {
+        this._listenToEvents(channel, type);
         this.joinedChannels[type] = channel;
         this._resolvePush(channel.push(action, message), resolve, reject);
       });
+  },
+
+  _listenToEvents: function(channel, type) {
+    const pushEvents = this.addEvents.concat(this.updateEvents);
+
+    pushEvents.forEach((event) => {
+      channel.on(event, (response) => {
+        this.store.pushPayload(response);
+      });
+    });
+
+    this.removeEvents.forEach((event) => {
+      channel.on(event, (response) => {
+        this.store.find(type, response.id).then((model) => {
+          this.store.unloadRecord(model);
+        });
+      });
+    });
   },
 
   _resolvePush: function(channel, resolve, reject) {
     channel.
       receive("error", reasons => reject(reasons)).
       receive("ok", (response) => {
-        resolve(response.posts);
+        resolve(response);
       });
   }
 });
