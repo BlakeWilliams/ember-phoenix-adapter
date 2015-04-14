@@ -15,8 +15,8 @@ export default DS.Adapter.extend({
     this.joinedChannels = {};
   },
 
-  find: function(store, type) {
-    return this._send(type.typeKey, "show", {});
+  find: function(store, type, id) {
+    return this._send(type.typeKey, "show", {id: id});
   },
 
   findAll: function(store, type) {
@@ -53,7 +53,7 @@ export default DS.Adapter.extend({
 
   _send: function(type, action, message) {
     const promise = new Ember.RSVP.Promise((resolve, reject) => {
-      const channel = this.joinedChannels[channel];
+      const channel = this.joinedChannels[type];
       if (channel) {
         this._resolvePush(channel.push(action, message), resolve, reject);
       } else {
