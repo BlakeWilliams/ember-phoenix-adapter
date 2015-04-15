@@ -19,7 +19,7 @@ updating, and removing records.
 
 Here's an example adapter:
 
-```
+```javascript
 import PhoenixAdapter from "ember-phoenix-adapter";
 
 export default PhoenixAdapter.extend({
