@@ -1,25 +1,52 @@
 # Ember-phoenix-adapter
 
-This README outlines the details of collaborating on this Ember addon.
+An Ember CLI adapter for using [Phoenix] channels with Ember-Data.
+
+[Phoenix]: http://www.phoenixframework.org/
 
 ## Installation
 
-* `git clone` this repository
-* `npm install`
-* `bower install`
+`$ ember install ember-phoenix-adapater`
 
-## Running
+## Usage
 
-* `ember server`
-* Visit your app at http://localhost:4200.
+The adapter expects `config/environment.js` to define `SocketURI` for phoenix.js
+to connect to.
 
-## Running Tests
+Adapters are configurable, you can define the joinParams which are sent when
+attempting to join a channel as well as the events to listen to for adding,
+updating, and removing records.
 
-* `ember test`
-* `ember test --server`
+Here's an example adapter:
 
-## Building
+```
+import PhoenixAdapter from "ember-phoenix-adapter";
 
-* `ember build`
+export default PhoenixAdapter.extend({
+  addEvents: ["add", "create"],
 
-For more information on using ember-cli, visit [http://www.ember-cli.com/](http://www.ember-cli.com/).
+  joinParams: function() {
+    return { authToken: token };
+  }.property("token"),
+});
+```
+
+### Joining Channels
+
+Each model using the adapter has to join a Phoenix channel of the same name, but
+pluralized.
+
+ex: If you have a "post" model the adapter will attempt to join the `posts`
+channel.
+
+You can specify the parameters sent when joining a channel by defining a
+`joinParams` property.
+
+### Listening to broadcasts
+
+You can specify what events that the adapter listens to for updating, adding,
+and removing records via `addEvents`, `updateEvents`, and `removeEvents`.
+
+* `addEvents` defaults to `["add"]`
+* `updateEvents` defaults to `["update"]`
+* `removeEvents` defaults to `["remove"]`
