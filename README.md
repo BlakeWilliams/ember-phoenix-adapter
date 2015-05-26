@@ -6,7 +6,7 @@ An Ember CLI adapter for using [Phoenix] channels with Ember-Data.
 
 ## Installation
 
-`$ ember install ember-phoenix-adapater`
+`$ ember install ember-phoenix-adapter`
 
 ## Usage
 
