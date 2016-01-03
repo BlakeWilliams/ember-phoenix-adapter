@@ -68,13 +68,14 @@ export default DS.Adapter.extend({
     const joinParams = this.get("joinParams");
     const pluralType = pluralize(type);
 
-    this.phoenix.join(`${pluralType}:${action}`, joinParams).
+    const channel = this.phoenix.channel(`${pluralType}:${action}`, joinParams);
+    channel.join().
       receive("ignore", () => {
         const error = `Could not connect to the ${type} channel`;
         Ember.logger.warn(error);
         reject(error);
       }).
-      receive("ok", (channel) => {
+      receive("ok", (resp) => {
         this._listenToEvents(channel, type);
         this.joinedChannels[type] = channel;
         this._resolvePush(channel.push(action, message), resolve, reject);
