@@ -16,39 +16,39 @@ export default DS.Adapter.extend({
   },
 
   find: function(store, type, id) {
-    return this._send(type.typeKey, "show", {id: id});
+    return this._send(type.modelName, "show", {id: id});
   },
 
   findAll: function(store, type) {
-    return this._send(type.typeKey, "all", {});
+    return this._send(type.modelName, "all", {});
   },
 
   findQuery: function(store, type, query) {
-    return this._send(type.typeKey, "show", query);
+    return this._send(type.modelName, "show", query);
   },
 
   createRecord: function(store, type, snapshot) {
     const data = {};
-    const serializer = store.serializerFor(type.typeKey);
+    const serializer = store.serializerFor(type.modelName);
 
     serializer.serializeIntoHash(data, type, snapshot, { includeId: true });
 
-    return this._send(type.typeKey, "create", data);
+    return this._send(type.modelName, "create", data);
   },
 
   updateRecord: function(store, type, snapshot) {
     const data = {};
-    const serializer = store.serializerFor(type.typeKey);
+    const serializer = store.serializerFor(type.modelName);
 
     serializer.serializeIntoHash(data, type, snapshot);
 
-    return this._send(type.typeKey, "update", data);
+    return this._send(type.modelName, "update", data);
   },
 
   deleteRecord: function(store, type, snapshot) {
     const id = snapshot.id;
 
-    return this._send(type.typeKey, "delete", { id: id });
+    return this._send(type.modelName, "delete", { id: id });
   },
 
   _send: function(type, action, message) {
@@ -68,13 +68,14 @@ export default DS.Adapter.extend({
     const joinParams = this.get("joinParams");
     const pluralType = pluralize(type);
 
-    this.phoenix.join(`${pluralType}:${action}`, joinParams).
+    const channel = this.phoenix.channel(`${pluralType}:${action}`, joinParams);
+    channel.join().
       receive("ignore", () => {
         const error = `Could not connect to the ${type} channel`;
         Ember.logger.warn(error);
         reject(error);
       }).
-      receive("ok", (channel) => {
+      receive("ok", (resp) => {
         this._listenToEvents(channel, type);
         this.joinedChannels[type] = channel;
         this._resolvePush(channel.push(action, message), resolve, reject);
