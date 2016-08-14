@@ -6,7 +6,7 @@ export default {
   name: "phoenix-adapter",
   after: "store",
 
-  initialize: function(container, application) {
+  initialize: function(application) {
     const uri = ENV.SocketURI;
 
     if (uri === undefined || uri === null) {
